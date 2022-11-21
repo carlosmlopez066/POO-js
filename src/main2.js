@@ -67,6 +67,31 @@
 //   ],
 
 // };
+
+//comentarios
+class Commet {
+  constructor({
+    content,
+    studentName,
+    studentRole = 'estudiante',
+  }) {
+    this.content = content;
+    this.studentName = studentName;
+    this.studentRole = studentRole;
+    this.likes = 0;
+  }
+  publicar() {
+    console.log(`${this.studentName} (${this.studentRole})`);
+    console.log(`${this.likes} LIKES`);
+    console.log(this.content);
+  }
+}
+
+
+
+
+
+
 //modulos de ECMAScript6
 function videoPlay(id) {
   const urlSecreta = 'https://platzisecreto.com' + id
@@ -76,7 +101,7 @@ function videoStop(id) {
   const urlSecreta = 'https://platzisecreto.com' + id
   console.log(`se esta pausado desdes la url ${urlSecreta}`);
 }
-export class PLatziClass {
+class PLatziClass {
   constructor({
     name,
     videoID,
@@ -121,9 +146,14 @@ class Course {
   constructor({
     name,
     classes = [],
+    isFree = false,
+    lang = 'spanish',
+
   }) {
     this._name = name;
     this.classes = classes;
+    this.isFree = isFree;
+    this.lang = lang;
   }
   get name() {
     return this._name;
@@ -145,12 +175,14 @@ class Course {
 //cursos de diferentes escuelas
 const CursoProgBsc = new Course({
   name: 'Curso de programación Básica',
+  isFree: true,
 })
 const CursoHTML = new Course({
   name: 'Curso de programación HTML',
 })
 const CursoCSS = new Course({
   name: 'Curso de programación CSS',
+  lang: 'english'
 })
 const CursoGIT = new Course({
   name: 'Curso de programación git',
@@ -198,6 +230,9 @@ const escuelaDataS = new LearningPaths({
   ]
 })
 
+
+
+
 //clase-model de estudiantes
 class Student {
   constructor({
@@ -222,9 +257,67 @@ class Student {
     this.approvedCourses = approvedCourses;
     this.LearningPaths = LearningPaths;
   }
+  publicarComentario(commentContent) {
+    const comment = new Commet({
+      content: commentContent,
+      studentName: this.name,
+    });
+    comment.publicar()
+  }
 }
+
+class FreeStudent extends Student {
+  constructor(props) {
+    super(props)
+  }
+  approveCourses(newCourse) {
+    if (newCourse.isFree) {
+      this.approvedCourses.push(newCourse);
+    } else {
+      console.warn(`Lo siento ${this.name} solo puedes tomar cursos abiertos`)
+    }
+  }
+}
+class BasicStudent extends Student {
+  constructor(props) {
+    super(props)
+  }
+  approveCourses(newCourse) {
+    if (newCourse.lang !== 'english') {
+      this.approvedCourses.push(newCourse);
+    } else {
+      console.warn(`Lo siento ${this.name} no puedes tomar  cursos en ingels`)
+    }
+  }
+}
+class ExpertStudent extends Student {
+  constructor(props) {
+    super(props)
+  }
+  approveCourses(newCourse) {
+    this.approveCourses.push(newCourse);
+  }
+}
+class TeacherStudent extends Student {
+  constructor(props) {
+    super(props)
+  }
+  approveCourses(newCourse) {
+    this.approveCourses.push(newCourse);
+  }
+
+  publicarComentario(commentContent) {
+    const comment = new Commet({
+      content: commentContent,
+      studentName: this.name,
+      studentRole: 'Profesor'
+    });
+    comment.publicar()
+  }
+}
+
 //instanciando a los estudiantes
-const juan2 = new Student({
+const juan = new BasicStudent({
   name: 'juandc',
   username: 'juan',
   email: 'juanito@gmail.com',
@@ -234,7 +327,7 @@ const juan2 = new Student({
     escuelaVgs,
   ]
 })
-const miguelito2 = new Student({
+const miguelito = new FreeStudent({
   name: 'miguelitodc',
   username: 'miguelito',
   email: 'miguelitoito@gmail.com',
@@ -243,4 +336,13 @@ const miguelito2 = new Student({
     escuelaVgs,
     escuelaDataS
   ]
+})
+
+const freddy = new TeacherStudent({
+  name: 'Freddy Vega',
+  username: 'freddyVega',
+  email: 'FreddyVega@gmail.com',
+  instagram: 'freddier',
+  twitter: 'freddier',
+
 })
